@@ -29,9 +29,7 @@ function Office(){
 
 };
 function LivingSpace(){};
-//var createroom = function(name){ // i want to collect the name and 
-  //  name = 
-//};
+
 var roomsList = []
 var roomObject =[]
 var personList = []
@@ -62,15 +60,10 @@ rl.on('line', function(line) {
       break
     //add_person
     case 'add_person':
-   // if (args[3] == null){
+   
       personObject.push(new Person(args[1],args[2],args[3]));
       console.log(personObject[0].wantsaccomodation)
-    //}
-    
-      
-      ;//jj b
-     //personList.push(args[2]);
-     //console.log(`The person "${args[1]}" has been added`); //   personObject[1].push(new Person(args[1],args[2]))
+    ;
     break
     default:
       console.log('You must enter a valid command')
