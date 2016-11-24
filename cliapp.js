@@ -47,14 +47,14 @@ rl.on('line', function(line) {
        roomobject[i] = new Room(args[i]);
         roomsList.push(roomobject[i].name);
         if (roomobject[i].name!= null){
-        console.log(`Room "${roomobject[i].name}" has been added!`)// thr strange quotation marks are used to signify text. The double quotation mark is to denote presence of a parsed string.
+        console.log(`Room "${roomobject[i].name}" has been added!`)
       }
     };    
       break
     // list_rooms
     case 'list_rooms':
       console.log('Printing out all rooms')
-      roomsList.forEach(function(room, idx) {//Seems each list object has a for each property.
+      roomsList.forEach(function(room, idx) {
         console.log(`${idx} - ${room}`)
       })
       break
