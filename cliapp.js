@@ -31,8 +31,9 @@ function Amity() {
 
 };
 
-function Room(name) {
+function Room(name, resident) {
   this.name = name;
+  this.resident = resident
 };
 
 function Office() {
@@ -44,7 +45,6 @@ function LivingSpace() {};
 var roomsList = []
 var roomObject = []
 var personList = []
-  //var personObject = []
 
 rl.prompt()
 
@@ -55,10 +55,12 @@ rl.on('line', function(line) {
       case 'create_room':
         var i = 1;
         while (i <= 10) {
-          roomObject[i] = new Room(args[i]);
-          roomsList.push(roomObject[i].name);
-          if (roomObject[i].name != null) {
-            console.log(`Room "${roomObject[i].name}" has been added!`)
+          //Created a Room object for each room. The name of the room is the object.
+
+          args[i] = new Room(args[i]);
+          roomsList.push(args[i].name);
+          if (args[i].name != null) {
+            console.log(`Room "${args[i].name}" has been added!`)
           }
           i++
         };
@@ -79,16 +81,18 @@ rl.on('line', function(line) {
           room = "Jupiter";
           var personObject = new Person(args[1], args[2], args[3], room)
           personObject.allocate();
-          //personObject.push(new Person(args[1], args[2], args[3], room))
+          var loom = new Room(room,args[1]);
+         
           console.log(personObject.name);
           console.log(personObject.role);
           console.log(personObject.wantsaccomodation);
           console.log(personObject.room);
+          console.log(loom.resident);
         } else if (args[1] != null && args[2] != null && args[3] != null) {
-          room = "Jupiter"
-            //personObject[i].push(new Person(args[1], args[2], args[3], room))
+          room = "Jupiter" // create a room object here
           var personObject = new Person(args[1], args[2], args[3], room)
           personObject.allocate();
+          room.resident = args[1];
           console.log(personObject.name);
           console.log(personObject.role);
           console.log(personObject.wantsaccomodation);
@@ -99,6 +103,12 @@ rl.on('line', function(line) {
         //To do:  
         break
       case 'reallocate_person':
+         // i want to access the objects from here
+        args[2].resident = args[1]
+        //var rellocateObject = new Room(args[2], args[1])
+        console.log(args[2].name)
+        console.log(args[2].resident)
+        //The rooms creaed have to be objects
         break
       case 'load_people':
         break
@@ -115,7 +125,6 @@ rl.on('line', function(line) {
       default:
         console.log('You must enter a valid command')
     }
-    //reste function is needed
 
     rl.prompt()
   })
