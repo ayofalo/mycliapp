@@ -44,7 +44,7 @@ function LivingSpace() {};
 var roomsList = []
 var roomObject = []
 var personList = []
-//var personObject = []
+  //var personObject = []
 
 rl.prompt()
 
@@ -53,12 +53,14 @@ rl.on('line', function(line) {
     switch (args[0]) {
       // create_room <room_name>
       case 'create_room':
-        for (i = 1; i < 11; i++) {
+        var i = 1;
+        while (i <= 10) {
           roomObject[i] = new Room(args[i]);
           roomsList.push(roomObject[i].name);
           if (roomObject[i].name != null) {
             console.log(`Room "${roomObject[i].name}" has been added!`)
           }
+          i++
         };
         break
         // list_rooms
@@ -71,7 +73,7 @@ rl.on('line', function(line) {
         //add_person
       case 'add_person':
 
-        
+
         if (args[1] != null && args[2] != null && args[3] == null) {
           args[3] = false
           room = "Jupiter";
@@ -84,7 +86,7 @@ rl.on('line', function(line) {
           console.log(personObject.room);
         } else if (args[1] != null && args[2] != null && args[3] != null) {
           room = "Jupiter"
-          //personObject[i].push(new Person(args[1], args[2], args[3], room))
+            //personObject[i].push(new Person(args[1], args[2], args[3], room))
           var personObject = new Person(args[1], args[2], args[3], room)
           personObject.allocate();
           console.log(personObject.name);
@@ -93,7 +95,7 @@ rl.on('line', function(line) {
           console.log(personObject.room);
 
         }
-      
+
         //To do:  
         break
       case 'reallocate_person':
