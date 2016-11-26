@@ -45,25 +45,36 @@ function LivingSpace() {};
 var roomsList = []
 var roomObject = []
 var personList = []
+var loom = []
 
 rl.prompt()
 
 rl.on('line', function(line) {
     var args = line.split(' ')
     switch (args[0]) {
+      
       // create_room <room_name>
       case 'create_room':
+        
         var i = 1;
-        while (i <= 10) {
+        while (i <= 11) {
           //Created a Room object for each room. The name of the room is the object.
 
           args[i] = new Room(args[i]);
+
           roomsList.push(args[i].name);
+
           if (args[i].name != null) {
             console.log(`Room "${args[i].name}" has been added!`)
           }
           i++
         };
+        for (i in roomsList) {
+          loom[i] = args[i]
+        }
+        for (i = 1; i < 11; i++) {
+          console.log(loom[i]);
+        }
         break
         // list_rooms
       case 'list_rooms':
@@ -75,19 +86,23 @@ rl.on('line', function(line) {
         //add_person
       case 'add_person':
 
-
+        for (i = 1; i < 10; i++) {
+          console.log(loom[i]);
+        }
         if (args[1] != null && args[2] != null && args[3] == null) {
           args[3] = false
           room = "Jupiter";
           var personObject = new Person(args[1], args[2], args[3], room)
           personObject.allocate();
-          var loom = new Room(room,args[1]);
-         
+
+          //pair the room to the object
+          //loom = new Room(room, args[1]);
+
           console.log(personObject.name);
           console.log(personObject.role);
           console.log(personObject.wantsaccomodation);
           console.log(personObject.room);
-          console.log(loom.resident);
+          //console.log(loom.resident);
         } else if (args[1] != null && args[2] != null && args[3] != null) {
           room = "Jupiter" // create a room object here
           var personObject = new Person(args[1], args[2], args[3], room)
@@ -103,12 +118,15 @@ rl.on('line', function(line) {
         //To do:  
         break
       case 'reallocate_person':
-         // i want to access the objects from here
-        args[2].resident = args[1]
-        //var rellocateObject = new Room(args[2], args[1])
-        console.log(args[2].name)
-        console.log(args[2].resident)
-        //The rooms creaed have to be objects
+        
+        for (i = 1; i < 11; i++) {
+          if (loom[i].name == args[2]) {
+            loom[i].resident = args[1]
+            console.log(loom[i].resident)
+          }
+          console.log(loom[i]);
+        }
+        
         break
       case 'load_people':
         break
