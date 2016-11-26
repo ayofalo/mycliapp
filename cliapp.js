@@ -44,7 +44,7 @@ function LivingSpace() {};
 var roomsList = []
 var roomObject = []
 var personList = []
-var personObject = []
+//var personObject = []
 
 rl.prompt()
 
@@ -71,24 +71,29 @@ rl.on('line', function(line) {
         //add_person
       case 'add_person':
 
+        
         if (args[1] != null && args[2] != null && args[3] == null) {
           args[3] = false
-          room = "Jupiter"
-          personObject.push(new Person(args[1], args[2], args[3], room))
-          console.log(personObject[0].name);
-          console.log(personObject[0].role);
-          console.log(personObject[0].wantsaccomodation);
-          console.log(personObject[0].room);
+          room = "Jupiter";
+          var personObject = new Person(args[1], args[2], args[3], room)
+          personObject.allocate();
+          //personObject.push(new Person(args[1], args[2], args[3], room))
+          console.log(personObject.name);
+          console.log(personObject.role);
+          console.log(personObject.wantsaccomodation);
+          console.log(personObject.room);
         } else if (args[1] != null && args[2] != null && args[3] != null) {
           room = "Jupiter"
-          personObject.push(new Person(args[1], args[2], args[3], room))
-          personObject[0].allocate();
-          console.log(personObject[0].name);
-          console.log(personObject[0].role);
-          console.log(personObject[0].wantsaccomodation);
-          console.log(personObject[0].room);
+          //personObject[i].push(new Person(args[1], args[2], args[3], room))
+          var personObject = new Person(args[1], args[2], args[3], room)
+          personObject.allocate();
+          console.log(personObject.name);
+          console.log(personObject.role);
+          console.log(personObject.wantsaccomodation);
+          console.log(personObject.room);
 
         }
+      
         //To do:  
         break
       case 'reallocate_person':
@@ -108,6 +113,8 @@ rl.on('line', function(line) {
       default:
         console.log('You must enter a valid command')
     }
+    //reste function is needed
+
     rl.prompt()
   })
   .on('close', function() {
