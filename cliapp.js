@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var fs = require('fs');
+
 const readline = require('readline')
 
 const rl = readline.createInterface({
@@ -46,16 +48,17 @@ var roomsList = []
 var roomObject = []
 var personList = []
 var loom = []
+var param = []
 
 rl.prompt()
 
 rl.on('line', function(line) {
     var args = line.split(' ')
     switch (args[0]) {
-      
+
       // create_room <room_name>
       case 'create_room':
-        
+
         var i = 1;
         while (i <= 11) {
           //Created a Room object for each room. The name of the room is the object.
@@ -118,7 +121,7 @@ rl.on('line', function(line) {
         //To do:  
         break
       case 'reallocate_person':
-        
+
         for (i = 1; i < 11; i++) {
           if (loom[i].name == args[2]) {
             loom[i].resident = args[1]
@@ -126,9 +129,52 @@ rl.on('line', function(line) {
           }
           console.log(loom[i]);
         }
-        
+
         break
       case 'load_people':
+        var content = fs.readFileSync('sample.txt', 'utf8');
+        var contentlines = content.split("\n");
+        for (i = 0; i < contentlines.length+1; i++) {
+          param[i] = contentlines[i].split(" ");
+             console.log(param[i]);
+            console.log(param[i+1]);
+            console.log(param[i+2]);
+          if (param[i] != null && param[i + 1] != null && args[i + 2] == null) {
+            param[i + 2] = false
+            room = "Jupiter";
+            console.log(param[i]);
+            console.log(param[i+1]);
+            console.log(param[i+2]);
+            
+            var personObject = new Person(param[i], param[i + 1], param[i + 2], room)
+            personObject.allocate();
+            console.log(room);
+            //pair the room to the object
+            //loom = new Room(room, args[1]);
+
+            //console.log(personObject.name);
+            //console.log(personObject.role);
+            //console.log(personObject.wantsaccomodation);
+            //console.log(personObject.room);
+            //console.log(loom.resident);
+          } else if (param[i] != null && param[i + 1] != null && param[i + 2] != null) {
+            room = "Jupiter" // create a room object here
+            var personObject = new Person(param[i], param[i + 1], param[i + 2], room)
+            personObject.allocate();
+            room.resident = param[i];
+            console.log(personObject.name);
+            console.log(personObject.role);
+            console.log(personObject.wantsaccomodation);
+            console.log(personObject.room);
+
+          }
+
+        
+        }
+
+        
+
+
         break
       case 'print_allocations':
         break
