@@ -44,11 +44,13 @@ function Office() {
 
 function LivingSpace() {};
 
-var roomsList = []
-var roomObject = []
-var personList = []
-var loom = []
-var param = []
+var roomsList = [];
+var roomObject = [];
+var personList = [];
+var loom = [];
+var param = [];
+var sparam = [];
+//var contentlines = [];
 
 rl.prompt()
 
@@ -134,28 +136,26 @@ rl.on('line', function(line) {
       case 'load_people':
         var content = fs.readFileSync('sample.txt', 'utf8');
         var contentlines = content.split("\n");
-        for (i = 0; i < contentlines.length+1; i++) {
-          param[i] = contentlines[i].split(" ");
-             console.log(param[i]);
-            console.log(param[i+1]);
-            console.log(param[i+2]);
-          if (param[i] != null && param[i + 1] != null && args[i + 2] == null) {
-            param[i + 2] = false
+
+        for (i = 0; i < 7; i++) {
+
+
+          param = contentlines[i].split(" ");
+          //param [i] = sparam.split(" ");
+
+          if (param[0] != null && param[1] != null && args[2] == null) {
+            param[2] = false
             room = "Jupiter";
-            console.log(param[i]);
-            console.log(param[i+1]);
-            console.log(param[i+2]);
-            
-            var personObject = new Person(param[i], param[i + 1], param[i + 2], room)
+
+            var personObject = new Person(param[0], param[1], param[2], room)
             personObject.allocate();
-            console.log(room);
             //pair the room to the object
             //loom = new Room(room, args[1]);
 
-            //console.log(personObject.name);
-            //console.log(personObject.role);
-            //console.log(personObject.wantsaccomodation);
-            //console.log(personObject.room);
+            console.log(personObject.name);
+            console.log(personObject.role);
+            console.log(personObject.wantsaccomodation);
+            console.log(personObject.room);
             //console.log(loom.resident);
           } else if (param[i] != null && param[i + 1] != null && param[i + 2] != null) {
             room = "Jupiter" // create a room object here
@@ -169,14 +169,16 @@ rl.on('line', function(line) {
 
           }
 
-        
+
         }
-
-        
-
-
         break
       case 'print_allocations':
+       fs.writeFile('demo.txt','This is NodeJS Demo "\n" This is NodeJS Demo', function(err){
+        if(err){
+          return console.log(err);
+        }
+        console.log("File created!");
+       });
         break
       case 'print_unallocated':
         break
