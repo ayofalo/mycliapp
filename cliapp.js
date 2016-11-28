@@ -173,20 +173,55 @@ rl.on('line', function(line) {
         }
         break
       case 'print_allocations':
-       fs.writeFile('demo.txt','This is NodeJS Demo "\n" This is NodeJS Demo', function(err){
-        if(err){
-          return console.log(err);
-        }
-        console.log("File created!");
-       });
+        fs.writeFile('demo.txt', 'This is NodeJS Demo "\n" This is NodeJS Demo', function(err) {
+          if (err) {
+            return console.log(err);
+          }
+          console.log("File created!");
+        });
         break
       case 'print_unallocated':
         break
       case 'print_room':
         break
       case 'save_state':
-        break
+        var sqlite3 = require('sqlite3').verbose();
+        var db = new sqlite3.Database('abcd');
+
+        db.serialize(function() {
+          db.run("CREATE TABLE person (id INT, dt TEXT)");
+
+          var stmt = db.prepare("INSERT INTO person VALUES (?,?)");
+          for (var i = 0; i < 10; i++) {
+
+            var d = new Date();
+            var n = d.toLocaleTimeString();
+            stmt.run(i, n);
+          }
+          stmt.finalize();
+            //var textdb = [];
+          db.each("SELECT id, dt FROM person", function(err, row) {
+            console.log("person id : " + row.id, row.dt);
+             //textdb = row.id ; 
+             //console.log(textdb);
+          });
+        });
+
+        db.close();  
+          break
       case 'load_state':
+
+       var sqlite3 = require('sqlite3').verbose();
+        var db = new sqlite3.Database('abcd');
+
+        db.serialize(function() {
+            //var textdb = [];
+          db.each("SELECT id, dt FROM person", function(err, row) {
+            //console.log("person id : " + row.id, row.dt);
+             textdb = row.id ; 
+             console.log(textdb);
+          });
+        });
         break
       default:
         console.log('You must enter a valid command')
