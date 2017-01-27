@@ -13,6 +13,7 @@
     "mycliapp": "./cliapp.js"
   },
   "dependencies": {
+    "autocomplete": "0.0.1",
     "commander": "^2.9.0"
   }
 }

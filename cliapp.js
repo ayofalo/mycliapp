@@ -1,25 +1,60 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
+var fs = require('fs'); //
 
 const readline = require('readline')
 
-const rl = readline.createInterface({
+const rl = readline.createInterface({ // I want to inteprete this. 
   input: process.stdin,
   output: process.stdout,
-  prompt: '>> '
+  prompt: '>>'
 })
 
-function Person(name, role, wantsaccomodation, room) {
-  this.name = name;
-  this.role = role;
+function Person(name, role, wantsaccomodation, room) { // Class person with arguements name, role, accommodation and room. 
+  this.name = name; //A property of the class Person
+  this.role = role; //A property of the class role. 
   this.wantsaccomodation = wantsaccomodation;
   this.room = room;
   this.allocate = function() {
     this.room = roomsList[Math.floor((Math.random() * roomsList.length))];
 
   };
+  this.allocateOffice = function() {
+    var n = Math.floor((Math.random() * officearray.length));
+    if (officearray[n].residentnumber < 6) { // i have to connect this part to the resident part
+      this.room = officearray[n].name;
+      officearray[n].resident.push(this.name) // addition
+      officearray[n].residentnumber = officearray[n].residentnumber + 1
+
+
+    } else {
+      console.log("You have exceeded the room limit");
+    }
+  }
+  this.allocateLivingSpace = function() {
+    var n = Math.floor((Math.random() * livingspacearray.length));
+    if (livingspacearray[n].residentnumber < 4) { // i have to connect this part to the resident part
+      this.room = livingspacearray[n].name;
+      livingspacearray[n].resident.push(this.name);
+      livingspacearray[n].residentnumber = livingspacearray[n].residentnumber + 1;
+    } else {
+      console.log("You have exceeded the room limit");
+    }
+  }
 }
+
+var reallocate = function(name, room) {
+  for (i = 0; i < personList.length; i++) {
+    if (name == personList[i].name) {
+      personList[i].room = room;
+      console.log(personList[i].room);
+    }
+    // else{
+    //console.log("Try again");
+    //}
+  }
+
+};
 
 function Fellow() {
 
@@ -35,24 +70,36 @@ function Amity() {
 
 function Room(name, resident) {
   this.name = name;
-  this.resident = resident
-};
-
-function Office() {
+  this.resident = resident;
 
 };
 
-function LivingSpace() {};
+function Office(name) {
+  this.name = name;
+  this.type = Office;
+  this.resident = [];
+  this.residentnumber = 0;
+
+};
+
+function LivingSpace(name) {
+  this.name = name;
+  this.type = Office;
+  this.resident = [];
+  this.residentnumber = 0;
+};
 
 var roomsList = [];
+var officeroomsList = [];
 var roomObject = [];
 var personList = [];
-var loom = [];
 var param = [];
 var sparam = [];
-//var contentlines = [];
+var officearray = [];
+var livingspacearray = [];
 
-rl.prompt()
+
+rl.prompt() // resets it 
 
 rl.on('line', function(line) {
     var args = line.split(' ')
@@ -62,166 +109,248 @@ rl.on('line', function(line) {
       case 'create_room':
 
         var i = 1;
-        while (i <= 11) {
+        while (i < 11) {
           //Created a Room object for each room. The name of the room is the object.
+          var n = Math.floor(Math.random() * 2);
+          if (n == 1) {
+            args[i] = new Office(args[i]);
+            // officeroomsList.push(args[i].name)
+            officearray.push(args[i]); //Creating a new room object for each 
+            console.log(`Room "${args[i].name}" is an Office!`)
 
-          args[i] = new Room(args[i]);
-
-          roomsList.push(args[i].name);
-
-          if (args[i].name != null) {
-            console.log(`Room "${args[i].name}" has been added!`)
+          } else {
+            args[i] = new LivingSpace(args[i]);
+            livingspacearray.push(args[i]);
+            console.log(`Room "${args[i].name}" is a LivingSpace!`)
           }
+          // roomsList.push(args[i].name);
           i++
         };
-        for (i in roomsList) {
-          loom[i] = args[i]
-        }
-        for (i = 1; i < 11; i++) {
-          console.log(loom[i]);
-        }
+
+        sparam.push(officearray);
+        sparam.push(livingspacearray);
+        console.log(sparam);
         break
+
         // list_rooms
       case 'list_rooms':
+        if (args[1] == "Office") {
+          officearray.forEach(function(room, idx) {
+            console.log(`${idx} - ${room.name}`)
+          })
+        } else if (args[1] == "LivingSpace") {
+          livingspacearray.forEach(function(room, idx) {
+            console.log(`${idx} - ${room.name}`)
+          })
+        }
         console.log('Printing out all rooms')
-        roomsList.forEach(function(room, idx) {
-          console.log(`${idx} - ${room}`)
-        })
         break
+
         //add_person
       case 'add_person':
 
-        for (i = 1; i < 10; i++) {
-          console.log(loom[i]);
-        }
+        if (args[1] != null && args[2] != null && args[3] != null) {
+
+          //Staff
+
+
+
+          switch (args[3]) {
+            case 'Y':
+
+              room = "Default";
+              var personObject = new Person(args[1], args[2], args[3], room);
+              personList.push(personObject)
+
+              if (args[2] === "Staff") {
+                personObject.allocateOffice();
+                console.log(personObject.room);
+                console.log(officearray.length);
+                console.log(officearray);
+              }
+
+              if (args[2] === "Fellow") {
+                rl.question('Are you interested in a LivingSpace or Office? ', (answer) => {
+
+                  console.log(`We would allocate you : ${answer}`);
+                  if (answer === "Office") {
+                    console.log('Office man')
+                    personObject.allocateOffice();
+                    console.log(personObject.room);
+                    console.log(officearray.length);
+                    console.log(officearray);
+                  }
+                  if (answer === "Livingspace") {
+                    console.log('Livingspace owner')
+                    personObject.allocateLivingSpace();
+                    console.log(personObject.room);
+                    console.log(livingspacearray.length);
+                    console.log(livingspacearray);
+                  }
+                })
+              }
+              console.log(officearray)
+              console.log(livingspacearray)
+
+              break;
+            case 'N':
+              console.log(" You have selected No therefore you are not going to be allocated any room. Goodluck");
+              break;
+            default:
+              console.log('You must enter a valid command');
+              break
+          }
+        };
+
+        if (args[1] == null || args[2] == null && args[3] == null) {
+          console.log("Kindly follow the input format : <person_identifier> <new_room_name> [wants accomodation[Y or N]]");
+        };
+
         if (args[1] != null && args[2] != null && args[3] == null) {
-          args[3] = false
-          room = "Jupiter";
-          var personObject = new Person(args[1], args[2], args[3], room)
-          personObject.allocate();
+          console.log("You have automatically selected N, Kindly input Y if you want to be allocated an accomodation");
+        };
 
-          //pair the room to the object
-          //loom = new Room(room, args[1]);
-
-          console.log(personObject.name);
-          console.log(personObject.role);
-          console.log(personObject.wantsaccomodation);
-          console.log(personObject.room);
-          //console.log(loom.resident);
-        } else if (args[1] != null && args[2] != null && args[3] != null) {
-          room = "Jupiter" // create a room object here
-          var personObject = new Person(args[1], args[2], args[3], room)
-          personObject.allocate();
-          room.resident = args[1];
-          console.log(personObject.name);
-          console.log(personObject.role);
-          console.log(personObject.wantsaccomodation);
-          console.log(personObject.room);
-
-        }
-
-        //To do:  
         break
       case 'reallocate_person':
 
-        for (i = 1; i < 11; i++) {
-          if (loom[i].name == args[2]) {
-            loom[i].resident = args[1]
-            console.log(loom[i].resident)
-          }
-          console.log(loom[i]);
-        }
-
+        reallocate(args[1], args[2]);
+        console.log();
         break
       case 'load_people':
         var content = fs.readFileSync('sample.txt', 'utf8');
         var contentlines = content.split("\n");
 
-        for (i = 0; i < 7; i++) {
+        for (i = 0; i < 10; i++) {
 
 
           param = contentlines[i].split(" ");
           //param [i] = sparam.split(" ");
+          console.log(param)
 
-          if (param[0] != null && param[1] != null && args[2] == null) {
-            param[2] = false
-            room = "Jupiter";
+          if (param[0] != null && param[1] != null && param[2] != null) {
 
-            var personObject = new Person(param[0], param[1], param[2], room)
-            personObject.allocate();
-            //pair the room to the object
-            //loom = new Room(room, args[1]);
+            switch (param[2]) {
+              case 'Y':
 
-            console.log(personObject.name);
-            console.log(personObject.role);
-            console.log(personObject.wantsaccomodation);
-            console.log(personObject.room);
-            //console.log(loom.resident);
-          } else if (param[i] != null && param[i + 1] != null && param[i + 2] != null) {
-            room = "Jupiter" // create a room object here
-            var personObject = new Person(param[i], param[i + 1], param[i + 2], room)
-            personObject.allocate();
-            room.resident = param[i];
-            console.log(personObject.name);
-            console.log(personObject.role);
-            console.log(personObject.wantsaccomodation);
-            console.log(personObject.room);
+                room = "Default";
+                var personObject = new Person(param[0], param[1], param[2], room);
+                personList.push(personObject)
+                if (param[1] === "Staff") {
+                  personObject.allocateOffice();
 
+                  console.log(personObject.room);
+                  console.log(officearray.length);
+
+                }
+
+
+                if (param[1] === "Fellow") {
+                  var r = Math.floor(Math.random() * 2);
+                  if (r == 1) {
+                    personObject.allocateOffice();
+                    console.log(personObject.room);
+                    console.log(officearray.length);
+                  } else {
+                    personObject.allocateLivingSpace();
+                    console.log(personObject.room);
+                    console.log(livingspacearray.length);
+                  }
+
+                }
+
+            }
           }
-
-
         }
+
         break
       case 'print_allocations':
-        fs.writeFile('demo.txt', 'This is NodeJS Demo "\n" This is NodeJS Demo', function(err) {
-          if (err) {
-            return console.log(err);
+
+        var pit = []
+        pit.push(JSON.stringify(officearray));
+        pit.push(JSON.stringify(livingspacearray));
+        require('fs').writeFile(
+
+          './allocations',
+
+          pit,
+
+          function(err) {
+            if (err) {
+              console.error('Crap happens');
+            }
           }
-          console.log("File created!");
-        });
+        );
+
         break
       case 'print_unallocated':
+
+        var unallocated = []
+        for (i = 0; i < officearray.length; i++) {
+          if (officearray[i].residentnumber == 0) {
+            unallocated.push(officearray[i].name)
+          }
+        }
+        for (i = 0; i < livingspacearray.length; i++) {
+          if (livingspacearray[i].residentnumber == 0) {
+            unallocated.push(livingspacearray[i].name)
+          }
+        }
+        require('fs').writeFile(
+
+          './unallocations',
+
+          unallocated,
+
+          function(err) {
+            if (err) {
+              console.error('Crap happens');
+            }
+          }
+        );
         break
       case 'print_room':
+
+        for (i = 0; i < officearray.length; i++) {
+          if (officearray[i].name == args[1]) {
+            console.log(officearray[i].resident)
+          }
+        }
         break
       case 'save_state':
         var sqlite3 = require('sqlite3').verbose();
-        var db = new sqlite3.Database('abcd');
+        var db = new sqlite3.Database(args[1]);
 
         db.serialize(function() {
-          db.run("CREATE TABLE person (id INT, dt TEXT)");
+          db.run("CREATE TABLE person (id TEXT, dt TEXT)");
 
           var stmt = db.prepare("INSERT INTO person VALUES (?,?)");
-          for (var i = 0; i < 10; i++) {
+          for (var i = 0; i < officearray.length; i++) {
 
-            var d = new Date();
-            var n = d.toLocaleTimeString();
-            stmt.run(i, n);
+            var d = officearray[i].name
+            var r = officearray[i].resident
+            stmt.run(d, r);
           }
           stmt.finalize();
-            //var textdb = [];
+          //var textdb = [];
           db.each("SELECT id, dt FROM person", function(err, row) {
             console.log("person id : " + row.id, row.dt);
-             //textdb = row.id ; 
-             //console.log(textdb);
+            //textdb = row.id ; 
+            //console.log(textdb);
           });
         });
 
-        db.close();  
-          break
+        db.close();
+        break
       case 'load_state':
-
-       var sqlite3 = require('sqlite3').verbose();
-        var db = new sqlite3.Database('abcd');
-
-        db.serialize(function() {
-            //var textdb = [];
-          db.each("SELECT id, dt FROM person", function(err, row) {
-            //console.log("person id : " + row.id, row.dt);
-             textdb = row.id ; 
-             console.log(textdb);
-          });
+        var sqlite3 = require('sqlite3').verbose();
+        var file = args[1];
+        var db = new sqlite3.Database(file);
+        db.all("SELECT id,dt FROM person", function(err, rows) {
+          rows.forEach(function(row) {
+            console.log(row.id, row.dt);
+          })
         });
+        db.close();
         break
       default:
         console.log('You must enter a valid command')
@@ -231,4 +360,4 @@ rl.on('line', function(line) {
   })
   .on('close', function() {
     console.log('Thank you for using Room Allocator')
-  })
+  });
