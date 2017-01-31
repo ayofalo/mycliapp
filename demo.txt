@@ -1,2 +1,0 @@
-This is NodeJS Demo "
-" This is NodeJS Demo

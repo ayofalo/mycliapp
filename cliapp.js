@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var fs = require('fs'); //
+//var fs = require('fs'); // The File system module is used in NodeJS  to provide Input and output functionality. 
 
-const readline = require('readline')
+const readline = require('readline') //
 
 const rl = readline.createInterface({ // I want to inteprete this. 
   input: process.stdin,
@@ -11,7 +11,7 @@ const rl = readline.createInterface({ // I want to inteprete this.
 })
 
 function Person(name, role, wantsaccomodation, room) { // Class person with arguements name, role, accommodation and room. 
-  this.name = name; //A property of the class Person
+  this.name = name; //A property of the class Personss
   this.role = role; //A property of the class role. 
   this.wantsaccomodation = wantsaccomodation;
   this.room = room;
@@ -44,29 +44,24 @@ function Person(name, role, wantsaccomodation, room) { // Class person with argu
 }
 
 var reallocate = function(name, room) {
-  for (i = 0; i < personList.length; i++) {
-    if (name == personList[i].name) {
-      personList[i].room = room;
-      console.log(personList[i].room);
+
+  for (i = 0; i < officearray.length; i++) {
+    if (room == officearray[i].name) {
+      officearray[i].resident.push(name);
+      officearray[i].residentnumber = officearray[i].residentnumber + 1
+      console.log(officearray[i].resident);
     }
-    // else{
-    //console.log("Try again");
-    //}
   }
-
+  for (i = 0; i < livingspacearray.length; i++) {
+    if (room == livingspacearray[i].name) {
+      livingspacearray[i].resident.push(name);
+      livingspacearray[i].residentnumber = livingspacearray[i].residentnumber + 1;
+      console.log(livingspacearray[i].resident);
+    }
+  }
 };
 
-function Fellow() {
 
-};
-
-function Staff() {
-
-}
-
-function Amity() {
-
-};
 
 function Room(name, resident) {
   this.name = name;
@@ -74,7 +69,7 @@ function Room(name, resident) {
 
 };
 
-function Office(name) {
+function Office(name) { //a second arguement would be pushed into the resident array
   this.name = name;
   this.type = Office;
   this.resident = [];
@@ -97,6 +92,8 @@ var param = [];
 var sparam = [];
 var officearray = [];
 var livingspacearray = [];
+var lee = [];
+var leen = [];
 
 
 rl.prompt() // resets it 
@@ -213,6 +210,21 @@ rl.on('line', function(line) {
         break
       case 'reallocate_person':
 
+        for (i = 0; i < officearray.length; i++) {
+          if (args[1] == officearray[i].resident) {
+            officearray[i].resident =[];
+            officearray[i].residentnumber= officearray[i].residentnumber - 1;
+            console.log(officearray[i].resident);
+          }
+        }
+        for (i = 0; i < livingspacearray.length; i++) {
+          if (args[2] == livingspacearray[i].resident) {
+            livingspacearray[i].resident=[];
+            livingspacearray[i].residentnumber= livingspacearray[i].residentnumber - 1;
+            console.log(livingspacearray[i].resident);
+          }
+        }
+
         reallocate(args[1], args[2]);
         console.log();
         break
@@ -315,15 +327,21 @@ rl.on('line', function(line) {
             console.log(officearray[i].resident)
           }
         }
+        for (i = 0; i < livingspacearray.length; i++) {
+          if (livingspacearray[i].name == args[1]) {
+            console.log(livingspacearray[i].resident)
+          }
+        }
         break
       case 'save_state':
         var sqlite3 = require('sqlite3').verbose();
         var db = new sqlite3.Database(args[1]);
 
         db.serialize(function() {
-          db.run("CREATE TABLE person (id TEXT, dt TEXT)");
-
-          var stmt = db.prepare("INSERT INTO person VALUES (?,?)");
+          db.run("CREATE TABLE Operson (id TEXT, dt TEXT)");
+          db.run("CREATE TABLE Lperson (id TEXT, dt TEXT)");
+          var stmt = db.prepare("INSERT INTO    Operson VALUES (?,?)");
+          var liv = db.prepare("INSERT INTO Lperson VALUES (?,?)");
           for (var i = 0; i < officearray.length; i++) {
 
             var d = officearray[i].name
@@ -331,11 +349,18 @@ rl.on('line', function(line) {
             stmt.run(d, r);
           }
           stmt.finalize();
-          //var textdb = [];
-          db.each("SELECT id, dt FROM person", function(err, row) {
-            console.log("person id : " + row.id, row.dt);
-            //textdb = row.id ; 
-            //console.log(textdb);
+          for (var i = 0; i < livingspacearray.length; i++) {
+
+            var d = livingspacearray[i].name
+            var r = livingspacearray[i].resident
+            liv.run(d, r);
+          }
+          liv.finalize();
+          db.each("SELECT id, dt FROM Operson", function(err, row) {
+            console.log("Operson id : " + row.id, row.dt);
+          });
+          db.each("SELECT id, dt FROM Lperson", function(err, row) {
+            console.log("Lperson id : " + row.id, row.dt);
           });
         });
 
@@ -345,10 +370,23 @@ rl.on('line', function(line) {
         var sqlite3 = require('sqlite3').verbose();
         var file = args[1];
         var db = new sqlite3.Database(file);
-        db.all("SELECT id,dt FROM person", function(err, rows) {
+        db.all("SELECT id,dt FROM Operson", function(err, rows) {
           rows.forEach(function(row) {
             console.log(row.id, row.dt);
+            row.id = new Office(row.id);
+            officearray.push(row.id);
           })
+
+        });
+
+
+        db.all("SELECT id,dt FROM Lperson", function(err, rows) {
+          rows.forEach(function(row) {
+            console.log(row.id, row.dt);
+            row.id = new LivingSpace(row.id);
+            livingspacearray.push(row.id);
+          })
+
         });
         db.close();
         break
