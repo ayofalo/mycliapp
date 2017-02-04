@@ -284,14 +284,14 @@ rl.on('line', function(line) { // on entering a line an array args would be crea
         break
       case 'print_allocations':
 
-        var pit = []
-        pit.push(JSON.stringify(officearray));
-        pit.push(JSON.stringify(livingspacearray));
+        var prt_allo = []
+        prt_allo.push(JSON.stringify(officearray));
+        prt_allo.push(JSON.stringify(livingspacearray));
         require('fs').writeFile(
 
           './allocations',
 
-          pit,
+          prt_allo,
 
           function(err) {
             if (err) {
@@ -331,12 +331,16 @@ rl.on('line', function(line) { // on entering a line an array args would be crea
 
         for (i = 0; i < officearray.length; i++) {
           if (officearray[i].name == args[1]) {
-            console.log(officearray[i].resident)
+            console.log(args[1]);
+            console.log('------------------');
+            console.log("Member "+ officearray[i].resident.toString());
           }
         }
         for (i = 0; i < livingspacearray.length; i++) {
           if (livingspacearray[i].name == args[1]) {
-            console.log(livingspacearray[i].resident)
+            console.log(args[1]);
+            console.log('------------------');
+            console.log("Member "+ livingspacearray[i].resident.toString())
           }
         }
         break
